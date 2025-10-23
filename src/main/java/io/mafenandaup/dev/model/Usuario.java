@@ -3,7 +3,8 @@ package io.mafenandaup.dev.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.validator.constraints.UUID;
+import java.util.UUID;
+
 
 import java.time.LocalDateTime;
 

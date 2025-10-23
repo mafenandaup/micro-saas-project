@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: construcao-saas
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/arielledb
+    username: arielle
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate.format_sql: true
+
+server:
+  port: 8080

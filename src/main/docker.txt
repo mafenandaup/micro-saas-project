@@ -1,0 +1,13 @@
+##rodando o pgADMIN
+
+docker run --name ariellePGADMIN -p 15432:80 -e PGADMIN_DEFAULT_EMAIL=admin@admin.com -e PGADMIN_DEFAULT_PASSWORD=arielle dpage/pgadmin4
+
+## rodando uma imagem do postgres:
+~$ docker run --name arielleapi -p 5432:5432 -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=arielle -e POSTGRESDB=arielledb  postgres:16.3
+sempre o nome da imagem por ultimo, depois de todos os comandos
+
+##criando uma network
+docker network create library-network
+
+
+// no caso do postgres, o url sempre será no modelo jdbc:postgresql://localhost:5432/POSTGRESDB (variavel que crianos no docker)

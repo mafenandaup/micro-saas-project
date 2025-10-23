@@ -2,7 +2,8 @@ package io.mafenandaup.dev.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.validator.constraints.UUID;
+import java.util.UUID;
+
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -23,11 +24,11 @@ public class Pedido {
    private String codigo;
 
     @ManyToOne
-    @Column(name = "cliente_fk")
+    @JoinColumn(name = "cliente_fk")
     private Usuario cliente;
 
     @ManyToOne
-    @Column(name = "representante_fk")
+    @JoinColumn(name = "representante_fk")
     private Usuario representante;
 
     @Column(name = "status_pedido")
