@@ -27,4 +27,16 @@ public class UsuarioService {
         return repository.findById(id);
     }
 
+    public void deleteUser(Usuario user) {
+         repository.delete(user);
+    }
+
+    public void alterarUsuario( Usuario user){
+        if (user.getId() == null){
+            throw new IllegalArgumentException("Usuário não encontrado/registrado. Tente novamente");
+        }
+        // adicionar validações de campo com o validator aqui depois, além de verificação de registro nos outros métodos,etc
+        repository.save(user);
+    }
+
 }

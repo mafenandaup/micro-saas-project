@@ -13,6 +13,7 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(csrf -> csrf.disable()) // PELO AMOR DE DEUS TIRA ISSO QUANDO ESTIVER EM PROD
                 .authorizeHttpRequests(authorize -> authorize
 
                         .requestMatchers("/users/**").permitAll() //alterar essas autorizações conforme o projeto se desenvolve
