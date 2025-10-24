@@ -21,7 +21,7 @@ public class Pedido {
     private UUID id;
 
     @Column(name = "code_pedido")
-   private String codigo;
+   private Integer codigo;
 
     @ManyToOne
     @JoinColumn(name = "cliente_fk")
@@ -49,7 +49,7 @@ public class Pedido {
     private LocalDateTime updatedAt;
 
     @Column(name = "lote")
-    private String lote;
+    private Integer lote;
 
 
 

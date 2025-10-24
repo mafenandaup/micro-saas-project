@@ -11,3 +11,58 @@ docker network create library-network
 
 
 // no caso do postgres, o url sempre será no modelo jdbc:postgresql://localhost:5432/POSTGRESDB (variavel que crianos no docker)
+
+mafenandaup@mafenandaup-Aspire-A315-58:~$ docker network create pg-network
+ced6c4bd13a7e3969cff6d17b2b0fb08878c337117327689df28721cfad1f914
+mafenandaup@mafenandaup-Aspire-A315-58:~$ docker run --name arielleapi   --network pg-network -e POSTGRES_USER=arielle -e POSTGRES_PASSWORD=postgres  -e POSTGRES_DB=arielledb -p 5432:5432  -d postgres:16.3
+d63ea6893b7f7cd1163409215733bcfe0f22a115cafef7cb1d70c7ccde7c8454
+mafenandaup@mafenandaup-Aspire-A315-58:~$ docker run --name ariellepgadmin --network pg-network -e PGADMIN_DEFAULT_EMAIL=admin@admin.com -e PGADMIN_DEFAULT_PASSWORD=arielle -p 15432:80 -d dpage/pgadmin4
+
+
+## INSERÇÃO DE DADOS NAS TABELAS: USUÁRIO
+
+INSERT INTO usuario (ativo, id_usuario, email, nome, role, senha, tipo_empresa) // depois por criado-em
+VALUES
+    (true,  'b1a9a1f2-7b3f-4e12-9a22-1dfe87aa1001', 'adminmf@gmail.com',     'Maria Fernanda',   'ADMIN',          'admin123',     NULL),
+    (false, 'a7e4b5d6-2a1f-4a67-9c33-3dfe65cc2001', 'mmmaia@gmail.com',      'Edson Cliente',    'CLIENTE',        'cliente123',   NULL),
+    (false, 'c9d8e7f6-4b3a-4c22-9d44-2bce76bb3001', 'fsapisos@empresa.com',  'Pisos FSA',        'REPRESENTANTE',  'rep123',       'JURIDICA'),
+    (true,  '32880767-07c6-4995-a765-850e8c0e5a63', 'marinha@empresa.com',   'Marinha Pisos',    'REPRESENTANTE',  'rep123',       'JURIDICA'),
+    (true,  'd5a4b3c2-6f7e-4d55-9a55-4cdf98aa4001', 'irmaosfeiroz@empresa.com','Irmãos Feiroz', 'REPRESENTANTE',  'rep123',       'FUNCIONAL');
+
+
+## INSERÇÃO DE DADOS NAS TABELAS: PRODUTO
+
+INSERT INTO produto (id_produto, nome, valor_unitario, estoque,categoria, disponivel)
+VALUES
+    ('4184e187-a279-4045-a159-109015a83808', 'Piso Cerâmico Branco 60x60', 39.90, 200, 0, true),
+    ('e6f0e672-d822-47ae-ae98-f3ab1538b36a', 'Revestimento Porcelanato 80x80', 69.90, 120, 1, true ),
+    ('583973e0-2d00-4c5e-a6c0-43c3501e0696', 'Piso Vinílico Carvalho 20x120',  89.90, 80, 1, true),
+    ('4dc2a4a0-0966-4ae3-aac4-ec15544809a5', 'Argamassa AC-II 20kg', 24.90, 500, 3, false );
+
+
+
+## INSERÇÃO DE DADOS NAS TABELAS: PEDIDO
+
+INSERT INTO pedido (id_pedido, code_pedido, cliente_fk, representante_fk, status_pedido, status_pre_pedido, criado_em, valor_total, atualizado_em, lote)
+VALUES
+    ('0d3b1721-3531-49b9-b475-f24e40a9e2cb',19340, 'a7e4b5d6-2a1f-4a67-9c33-3dfe65cc2001', '32880767-07c6-4995-a765-850e8c0e5a63', 'PROCESSANDO' , 'EM_EDICAO','2025-10-15', 139.70,'2025-10-15',1),
+    ('07ac3902-2dd5-430d-accc-1190261dcbc5', 23493,'a7e4b5d6-2a1f-4a67-9c33-3dfe65cc2001', 'd5a4b3c2-6f7e-4d55-9a55-4cdf98aa4001', 'APROVADO_FATURAMENTO','EM_EDICAO', '2025-10-17', 289.50,'2025-10-15',2);
+
+alter table pedido
+alter column code_pedido type int using code_pedido::int
+
+
+## INSERÇÃO DE DADOS NAS TABELAS: ITEM_PEDIDO
+
+--  Pedido 1
+INSERT INTO item_pedido (id_item_pedido, pedido_id_pedido, produto_id_produto, quantidade, valor_unitario, subtotal)
+VALUES
+    ('c2829343-1ddd-4afb-9055-715e223f3582', '0d3b1721-3531-49b9-b475-f24e40a9e2cb', '4184e187-a279-4045-a159-109015a83808', 2, 39.90,79.80),
+    ('c0169d87-8195-4ba5-a303-690754397351', '0d3b1721-3531-49b9-b475-f24e40a9e2cb', '583973e0-2d00-4c5e-a6c0-43c3501e0696', 1, 89.90,89.90);
+
+-- Pedido 2
+--  Pedido 1
+INSERT INTO item_pedido (id_item_pedido, pedido_id_pedido, produto_id_produto, quantidade, valor_unitario, subtotal)
+VALUES
+    ('f22d97d9-fa43-43ef-8d43-22a79d1befe0', '07ac3902-2dd5-430d-accc-1190261dcbc5', '4184e187-a279-4045-a159-109015a83808', 10, 39.90,399.00),
+    ('4e98fce7-4317-43b3-ae5c-78edb050a636', '07ac3902-2dd5-430d-accc-1190261dcbc5', '4dc2a4a0-0966-4ae3-aac4-ec15544809a5', 3, 24.90,74.70);

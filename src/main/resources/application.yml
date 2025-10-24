@@ -2,6 +2,10 @@ spring:
   application:
     name: construcao-saas
 
+  security:
+    user:
+      name: arielle
+
   datasource:
     url: jdbc:postgresql://localhost:5432/arielledb
     username: arielle
@@ -11,7 +15,7 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     properties:
       hibernate.format_sql: true
 
