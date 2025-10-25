@@ -1,24 +1,17 @@
 package io.mafenandaup.dev.dto;
 
-import io.mafenandaup.dev.model.Pedido;
-import io.mafenandaup.dev.model.Produto;
-import io.mafenandaup.dev.model.Role;
-import io.mafenandaup.dev.model.TipoEmpresa;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
+import io.mafenandaup.dev.model.*;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 
 public record ItemPedidoDTO(
         java.util.UUID id,
-        @NotEmpty(message = "Campo incompleto. tente novamente")
-        Pedido pedido,
+        @NotNull(message = "Campo incompleto. tente novamente")
+        java.util.UUID pedidoId,
 
-        @NotEmpty(message = "Campo incompleto. tente novamente")
-        Produto produto,
+        @NotNull(message = "Campo incompleto. tente novamente")
+        java.util.UUID produtoId,
 
         @NotNull(message = "Campo incompleto. tente novamente")
         BigDecimal valorUnitario,
@@ -29,5 +22,17 @@ public record ItemPedidoDTO(
         @NotNull(message = "Campo incompleto. tente novamente")
         BigDecimal subtotal
 
-        ) {
+) {
+
+
+    public ItemPedido mapAttributesItemPedido(Pedido pedido, Produto produto) {
+        ItemPedido item = new ItemPedido();
+        item.setPedido(pedido);
+        item.setProduto(produto);
+        item.setValorUnitario(this.valorUnitario);
+        item.setQuantidade(this.quantidade);
+        item.setSubtotal(this.subtotal);
+        return item;
+    }
 }
+

@@ -31,4 +31,17 @@ public class ItemPedidoService {
     public Optional<ItemPedido> obtainById(UUID id) {
         return repository.findById(id);
     }
+
+    public void deletarItemPedido(ItemPedido item) {
+        repository.delete(item);
+    }
+
+    public void alterarItemPedido( ItemPedido item){
+        if (item.getId() == null){
+            throw new IllegalArgumentException("Usuário não encontrado/registrado. Tente novamente");
+        }
+        // adicionar validações de campo com o validator aqui depois, além de verificação de registro nos outros métodos,etc
+        repository.save(item);
+    }
 }
+

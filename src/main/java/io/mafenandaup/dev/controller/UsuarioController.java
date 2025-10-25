@@ -7,7 +7,9 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,15 +24,21 @@ public class UsuarioController {
         this.service = service;
     }
 
-    @GetMapping //alterar aqui e o outro get pra configurar um DTO
+    @GetMapping
     public List<Usuario> getUsers(){
         return service.getUsers();
     }
 
     @PostMapping
-    public ResponseEntity<Usuario> saveUser(@RequestBody @Valid Usuario user){
-        service.saveUser(user);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+    public ResponseEntity<Usuario> saveUser(@RequestBody @Valid UsuarioDTO user){
+        var userEntity = user.mapAttributesUser();
+        try {
+            service.saveUser(userEntity);
+            return new ResponseEntity<>(userEntity, HttpStatus.CREATED);
+        }catch (IllegalArgumentException e){ // ALTERAR ESSES EXECPTIONS PRA ALGO MAIS PERSONALIZADO 
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
     }
 
     @GetMapping("/{id}")
@@ -41,7 +49,7 @@ public class UsuarioController {
 
         if (usuarioOptional.isPresent()){
             Usuario user = usuarioOptional.get();
-            UsuarioDTO dto = new UsuarioDTO(user.getId(), user.getNome(), user.getEmail(), user.getRole(), user.getAtivo(), user.getTipo());
+            UsuarioDTO dto = new UsuarioDTO(user.getId(), user.getNome(), user.getEmail(), user.getSenha(),user.getRole(), user.getAtivo());
             return ResponseEntity.ok(dto);
         }
 
@@ -81,11 +89,10 @@ public class UsuarioController {
             user.setRole(dto.role());
             user.setNome(dto.nome());
             user.setEmail(dto.email());
-            user.setTipo(dto.tipo());
 
             service.alterarUsuario(user);
 
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.ok(dto);
         } catch (IllegalArgumentException e) {
             throw new RuntimeException(e.getMessage()); // colocar mensagem customizada de erro depois
         }

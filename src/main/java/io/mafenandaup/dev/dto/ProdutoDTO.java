@@ -1,8 +1,6 @@
 package io.mafenandaup.dev.dto;
 
-import io.mafenandaup.dev.model.CategoriaProduto;
-import io.mafenandaup.dev.model.Role;
-import io.mafenandaup.dev.model.TipoEmpresa;
+import io.mafenandaup.dev.model.*;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
@@ -18,15 +16,24 @@ public record ProdutoDTO(  java.util.UUID id,
                            @NotNull(message = "Campo incompleto. tente novamente")
                            BigDecimal valorUnitario,
 
-                           @Enumerated(EnumType.STRING)
+                           @NotNull(message = "Campo incompleto. tente novamente")
                            Integer estoque,
 
                            @Enumerated(EnumType.STRING)
-                           @NotBlank(message = "Campo incompleto. tente novamente")
+                           @NotNull(message = "Campo incompleto. tente novamente")
                            CategoriaProduto categoriaProduto,
 
-                           @Enumerated(EnumType.STRING)
-                           @NotEmpty(message = "Campo incompleto. tente novamente")
+                           @NotNull(message = "Campo incompleto. tente novamente")
                            Boolean disponivel
 ) {
+
+    public Produto mapAttributesProduto(){
+        Produto produto = new Produto();
+        produto.setNome(this.nome);
+        produto.setValorUnitario(this.valorUnitario);
+        produto.setEstoque(this.estoque);
+        produto.setCategoriaProduto(this.categoriaProduto);
+        produto.setDisponivel(this.disponivel);
+        return produto;
+    }
 }

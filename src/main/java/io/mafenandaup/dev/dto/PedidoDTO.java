@@ -6,6 +6,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.security.core.parameters.P;
 
 import java.math.BigDecimal;
 
@@ -35,4 +36,17 @@ public record PedidoDTO(
         Integer lote
 
 ) {
+
+    public Pedido mapAttributesPedido(){
+        Pedido pedido = new Pedido();
+        pedido.setCodigo(this.codigo);
+        pedido.setCliente(this.cliente);
+        pedido.setRepresentante(this.representante);
+        pedido.setStatusPedido(this.statusPedido);
+        pedido.setStatusPrePedido(this.statusPrePedido);
+        pedido.setValorTotal(this.valorTotal);
+        pedido.setLote(this.lote);
+        return pedido;
+    }
 }
+
