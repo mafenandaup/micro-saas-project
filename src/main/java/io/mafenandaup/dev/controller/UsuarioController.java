@@ -35,7 +35,7 @@ public class UsuarioController {
         try {
             service.saveUser(userEntity);
             return new ResponseEntity<>(userEntity, HttpStatus.CREATED);
-        }catch (IllegalArgumentException e){ // ALTERAR ESSES EXECPTIONS PRA ALGO MAIS PERSONALIZADO 
+        }catch (IllegalArgumentException e){ // colocar a verificação de duplicatas aqui
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -70,7 +70,7 @@ public class UsuarioController {
             return ResponseEntity.noContent().build();
 
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); //mudar aqui pra illegalargs
         }
     }
 
@@ -94,7 +94,7 @@ public class UsuarioController {
 
             return ResponseEntity.ok(dto);
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException(e.getMessage()); // colocar mensagem customizada de erro depois
+            throw new RuntimeException(e.getMessage()); // colocar invalid args exception ou invalidenum
         }
     }
 }
