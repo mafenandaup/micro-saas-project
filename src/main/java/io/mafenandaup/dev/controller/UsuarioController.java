@@ -1,6 +1,6 @@
 package io.mafenandaup.dev.controller;
 
-import io.mafenandaup.dev.exceptions.DuplicateRegistryException;
+import io.mafenandaup.dev.dto.UsuarioDTO;
 import io.mafenandaup.dev.model.Usuario;
 import io.mafenandaup.dev.service.UsuarioService;
 import jakarta.validation.Valid;
@@ -34,12 +34,18 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> findUserById(@PathVariable String id){
+    public ResponseEntity<UsuarioDTO> findUserById(@PathVariable String id){
 
         var idUser = UUID.fromString(id);
         Optional<Usuario> usuarioOptional = service.obtainById(idUser);
-        Usuario user = usuarioOptional.get();
-        return ResponseEntity.ok(user);
+
+        if (usuarioOptional.isPresent()){
+            Usuario user = usuarioOptional.get();
+            UsuarioDTO dto = new UsuarioDTO(user.getId(), user.getNome(), user.getEmail(), user.getRole(), user.getAtivo(), user.getTipo());
+            return ResponseEntity.ok(dto);
+        }
+
+        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
@@ -61,7 +67,7 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Usuario> updateUser(@PathVariable String id, @RequestBody Usuario alterarPraDTO) {
+    public ResponseEntity<UsuarioDTO> updateUser(@PathVariable String id, @RequestBody UsuarioDTO dto) {
         try {
             var idUser = UUID.fromString(id);
             Optional<Usuario> userOptional = service.obtainById(idUser);
@@ -71,13 +77,11 @@ public class UsuarioController {
             }
 
             var user = userOptional.get();
-            user.setAtivo(alterarPraDTO.getAtivo());
-            user.setRole(alterarPraDTO.getRole());
-            user.setNome(alterarPraDTO.getNome());
-            user.setEmail(alterarPraDTO.getEmail());
-            user.setSenha(alterarPraDTO.getSenha());
-            user.setCreatedAt(alterarPraDTO.getCreatedAt());
-            user.setTipo(alterarPraDTO.getTipo());
+            user.setAtivo(dto.ativo());
+            user.setRole(dto.role());
+            user.setNome(dto.nome());
+            user.setEmail(dto.email());
+            user.setTipo(dto.tipo());
 
             service.alterarUsuario(user);
 
