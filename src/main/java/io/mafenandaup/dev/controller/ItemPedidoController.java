@@ -60,7 +60,7 @@ public class ItemPedidoController {
     }
 
     @PostMapping
-    public ResponseEntity<ItemPedido> saveUser(@RequestBody @Valid ItemPedidoDTO itensDTO){
+    public ResponseEntity<ItemPedido> saveItemPedido(@RequestBody @Valid ItemPedidoDTO itensDTO){
         try {
             Pedido pedido = pedidoService.obtainById(itensDTO.pedidoId())
                     .orElseThrow(() -> new IllegalArgumentException("Pedido não encontrado"));
@@ -77,7 +77,7 @@ public class ItemPedidoController {
     }
 
     @DeleteMapping("/{itemid}")
-    public ResponseEntity<ItemPedido> deleteUser(@PathVariable String itemid) {
+    public ResponseEntity<ItemPedido> deleteItemPedido(@PathVariable String itemid) {
         try {
             var idItemPedido = UUID.fromString(itemid);
             Optional<ItemPedido> itemPedidoOptional= service.obtainById(idItemPedido);

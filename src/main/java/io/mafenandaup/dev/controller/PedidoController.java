@@ -2,11 +2,13 @@ package io.mafenandaup.dev.controller;
 
 import io.mafenandaup.dev.dto.PedidoDTO;
 import io.mafenandaup.dev.dto.ProdutoDTO;
+import io.mafenandaup.dev.model.ItemPedido;
 import io.mafenandaup.dev.model.Pedido;
 import io.mafenandaup.dev.model.Produto;
 import io.mafenandaup.dev.model.Usuario;
 import io.mafenandaup.dev.service.PedidoService;
 import io.mafenandaup.dev.service.ProdutoService;
+import io.mafenandaup.dev.service.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +25,11 @@ public class PedidoController {
 
 
     private PedidoService service;
+    private UsuarioService usuarioService;
 
-    public PedidoController(PedidoService service) {
+    public PedidoController(PedidoService service, UsuarioService usuarioService) {
         this.service = service;
+        this.usuarioService = usuarioService;
     }
 
     @GetMapping
@@ -34,38 +38,57 @@ public class PedidoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Pedido> findById(@PathVariable String id){
+    public ResponseEntity<PedidoDTO> findById(@PathVariable String id){
 
         var idPedido = UUID.fromString(id);
         Optional<Pedido> pedidoOptional = service.obtainById(idPedido);
-        Pedido pedido = pedidoOptional.get();
-        return ResponseEntity.ok(pedido);
+
+        if (pedidoOptional.isPresent()){
+            Pedido pedido = pedidoOptional.get();
+            PedidoDTO dto = new PedidoDTO(
+                    pedido.getId(),
+                    pedido.getCodigo(),
+                    pedido.getCliente().getId(),
+                    pedido.getRepresentante().getId(),
+                    pedido.getStatusPedido(),
+                    pedido.getStatusPrePedido(),
+                    pedido.getValorTotal(),
+                    pedido.getLote()
+            );
+            return ResponseEntity.ok(dto);
+        }
+
+        return ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    public ResponseEntity<Produto> saveUser(@RequestBody @Valid ProdutoDTO produto){
-        var produtoEntity = produto.mapAttributesProduto();
+    public ResponseEntity<Pedido> savePedido(@RequestBody @Valid PedidoDTO pedido){
         try {
-            service.saveProduct(produtoEntity);
-            return new ResponseEntity<>(produtoEntity, HttpStatus.CREATED);
-        }catch (IllegalArgumentException e){ // ALTERAR ESSES EXECPTIONS PRA ALGO MAIS PERSONALIZADO
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+            Usuario cliente = usuarioService.obtainById(pedido.clienteId())
+                    .orElseThrow(() -> new IllegalArgumentException("Pedido não encontrado"));
+            Usuario representante = usuarioService.obtainById(pedido.representanteId())
+                    .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado"));
 
+            Pedido pedidoMap = pedido.mapAttributesPedido(cliente, representante);
+
+            service.savePedido(pedidoMap);
+            return new ResponseEntity<>(pedidoMap, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
-
     @DeleteMapping("/{id}")
-    public ResponseEntity<Produto> deleteUser(@PathVariable String id) {
+    public ResponseEntity<Pedido> deletePedido(@PathVariable String id) {
         try {
-            var idProduto = UUID.fromString(id);
-            Optional<Produto> produtoOptional = service.obtainById(idProduto);
+            var idPedido = UUID.fromString(id);
+            Optional<Pedido> pedidoOptional = service.obtainById(idPedido);
 
-            if (produtoOptional.isEmpty()) {
+            if (pedidoOptional.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
 
-            service.deleteProduto(produtoOptional.get());
+            service.deletePedido(pedidoOptional.get());
             return ResponseEntity.noContent().build();
 
         } catch (IllegalArgumentException e) {
@@ -74,23 +97,21 @@ public class PedidoController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<PedidoDTO> updateUser(@PathVariable String id, @RequestBody ProdutoDTO dto) {
+    public ResponseEntity<PedidoDTO> updateUser(@PathVariable String id, @RequestBody PedidoDTO dto) {
         try {
-            var idProduto = UUID.fromString(id);
-            Optional<Produto> produtoOptional = service.obtainById(idProduto);
+            var idPedido = UUID.fromString(id);
+            Optional<Pedido> pedidoOptional = service.obtainById(idPedido);
 
-            if (produtoOptional.isEmpty()) {
+            if (pedidoOptional.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
 
-            var produto = produtoOptional.get();
-            produto.setNome(dto.nome());
-            produto.setCategoriaProduto(dto.categoriaProduto());
-            produto.setEstoque(dto.estoque());
-            produto.setDisponivel(dto.disponivel());
-            produto.setValorUnitario(dto.valorUnitario());
+            var pedido = pedidoOptional.get();
+            pedido.setStatusPedido(dto.statusPedido());
+            pedido.setStatusPrePedido(dto.statusPrePedido());
 
-            service.alterarProduto(produto);
+
+            service.alterarPedido(pedido);
 
             return ResponseEntity.ok(dto);
         } catch (IllegalArgumentException e) {

@@ -48,7 +48,7 @@ public class ProdutoController {
     }
 
     @PostMapping
-    public ResponseEntity<Produto> saveUser(@RequestBody @Valid ProdutoDTO produto){
+    public ResponseEntity<Produto> saveProduto(@RequestBody @Valid ProdutoDTO produto){
         var produtoEntity = produto.mapAttributesProduto();
         try {
             service.saveProduct(produtoEntity);
@@ -61,7 +61,7 @@ public class ProdutoController {
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Produto> deleteUser(@PathVariable String id) {
+    public ResponseEntity<Produto> deleteProduto(@PathVariable String id) {
         try {
             var idProduto = UUID.fromString(id);
             Optional<Produto> produtoOptional = service.obtainById(idProduto);

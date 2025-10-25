@@ -15,16 +15,17 @@ public record PedidoDTO(
         @NotNull(message = "Campo vazio. tente novamente")
         Integer codigo,
 
-        @NotEmpty(message = "Campo incompleto. tente novamente")
-        Usuario cliente,
+        @NotNull(message = "Campo incompleto. tente novamente")
+        java.util.UUID clienteId,
 
-        @NotEmpty(message = "Campo incompleto. tente novamente")
-        Usuario representante,
+        @NotNull(message = "Campo incompleto. tente novamente")
+        java.util.UUID representanteId,
 
 
-        @NotEmpty(message = "Campo incompleto. tente novamente")
+        @NotNull(message = "Campo incompleto. tente novamente")
         @Enumerated(EnumType.STRING)
         StatusPedido statusPedido,
+
 
         @Enumerated(EnumType.STRING)
         StatusPrePedido statusPrePedido,
@@ -37,11 +38,10 @@ public record PedidoDTO(
 
 ) {
 
-    public Pedido mapAttributesPedido(){
+    public Pedido mapAttributesPedido(Usuario cliente, Usuario representante){
         Pedido pedido = new Pedido();
-        pedido.setCodigo(this.codigo);
-        pedido.setCliente(this.cliente);
-        pedido.setRepresentante(this.representante);
+        pedido.setCliente(cliente);
+        pedido.setRepresentante(representante);
         pedido.setStatusPedido(this.statusPedido);
         pedido.setStatusPrePedido(this.statusPrePedido);
         pedido.setValorTotal(this.valorTotal);
