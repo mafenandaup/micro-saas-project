@@ -1,5 +1,6 @@
 package io.mafenandaup.dev.validator;
 
+import io.mafenandaup.dev.exceptions.DuplicateRegistryException;
 import io.mafenandaup.dev.model.ItemPedido;
 import io.mafenandaup.dev.model.Pedido;
 import io.mafenandaup.dev.repository.ItemPedidoRepository;
@@ -17,9 +18,9 @@ public class ItemPedidoValidator {
         this.repository = repository;
     }
 
-    public void validarRegistro(ItemPedido item) throws Exception {
+    public void validarRegistro(ItemPedido item) {
         if (itemPedidoExists(item)){
-            throw new Exception("O pedido registrado já existe. tente novamente.");
+            throw new DuplicateRegistryException("O o item registrado já existe no pedido. tente novamente.");
         }
     }
 
@@ -32,6 +33,6 @@ public class ItemPedidoValidator {
         if (item.getId() ==null){
             return itemPedidoFound.isPresent();
         }
-        return !item.getId().equals(itemPedidoFound.get()) && itemPedidoFound.isPresent();
+        return  itemPedidoFound.isPresent() && !itemPedidoFound.get().getId().equals(item.getId());
     }
 }

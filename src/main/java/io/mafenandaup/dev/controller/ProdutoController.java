@@ -50,19 +50,14 @@ public class ProdutoController {
     @PostMapping
     public ResponseEntity<Produto> saveProduto(@RequestBody @Valid ProdutoDTO produto){
         var produtoEntity = produto.mapAttributesProduto();
-        try {
             service.saveProduct(produtoEntity);
             return new ResponseEntity<>(produtoEntity, HttpStatus.CREATED);
-        }catch (IllegalArgumentException e){ // ALTERAR ESSES EXECPTIONS PRA ALGO MAIS PERSONALIZADO
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
     }
 
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Produto> deleteProduto(@PathVariable String id) {
-        try {
+
             var idProduto = UUID.fromString(id);
             Optional<Produto> produtoOptional = service.obtainById(idProduto);
 
@@ -72,15 +67,11 @@ public class ProdutoController {
 
             service.deleteProduto(produtoOptional.get());
             return ResponseEntity.noContent().build();
-
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ProdutoDTO> updateUser(@PathVariable String id, @RequestBody ProdutoDTO dto) {
-        try {
+
             var idProduto = UUID.fromString(id);
             Optional<Produto> produtoOptional = service.obtainById(idProduto);
 
@@ -98,9 +89,7 @@ public class ProdutoController {
             service.alterarProduto(produto);
 
             return ResponseEntity.ok(dto);
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException(e.getMessage()); // colocar mensagem customizada de erro depois
-        }
+
     }
 
 }

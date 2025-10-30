@@ -11,5 +11,5 @@ import java.util.UUID;
 
 public interface ProdutoRepository extends JpaRepository<Produto, UUID> {
 
-    Optional<Produto> findByNomeAndValorUnitarioAndCategoria(String nome, BigDecimal valorUnitario, CategoriaProduto categoriaProduto);
+    Optional<Produto> findByNomeAndValorUnitarioAndCategoriaProduto(String nome, BigDecimal valorUnitario, CategoriaProduto categoriaProduto);
 }

@@ -1,6 +1,7 @@
 package io.mafenandaup.dev.controller;
 
 import io.mafenandaup.dev.dto.UsuarioDTO;
+import io.mafenandaup.dev.exceptions.InvalidArgsException;
 import io.mafenandaup.dev.model.Usuario;
 import io.mafenandaup.dev.service.UsuarioService;
 import jakarta.validation.Valid;
@@ -32,13 +33,8 @@ public class UsuarioController {
     @PostMapping
     public ResponseEntity<Usuario> saveUser(@RequestBody @Valid UsuarioDTO user){
         var userEntity = user.mapAttributesUser();
-        try {
             service.saveUser(userEntity);
-            return new ResponseEntity<>(userEntity, HttpStatus.CREATED);
-        }catch (IllegalArgumentException e){ // colocar a verificação de duplicatas aqui
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
+            return ResponseEntity.status(HttpStatus.CREATED).body(userEntity);
     }
 
     @GetMapping("/{id}")
@@ -56,27 +52,9 @@ public class UsuarioController {
         return ResponseEntity.notFound().build();
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Usuario> deleteUser(@PathVariable String id) {
-        try {
-            var idUser = UUID.fromString(id);
-            Optional<Usuario> userOptional = service.obtainById(idUser);
-
-            if (userOptional.isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-
-            service.deleteUser(userOptional.get());
-            return ResponseEntity.noContent().build();
-
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); //mudar aqui pra illegalargs
-        }
-    }
 
     @PutMapping("/{id}")
     public ResponseEntity<UsuarioDTO> updateUser(@PathVariable String id, @RequestBody UsuarioDTO dto) {
-        try {
             var idUser = UUID.fromString(id);
             Optional<Usuario> userOptional = service.obtainById(idUser);
 
@@ -93,8 +71,19 @@ public class UsuarioController {
             service.alterarUsuario(user);
 
             return ResponseEntity.ok(dto);
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException(e.getMessage()); // colocar invalid args exception ou invalidenum
+    }
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Usuario> deleteUser(@PathVariable String id) {
+            var idUser = UUID.fromString(id);
+            Optional<Usuario> userOptional = service.obtainById(idUser);
+
+            if (userOptional.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            service.deleteUser(userOptional.get());
+            return ResponseEntity.noContent().build();
         }
     }
-}
+

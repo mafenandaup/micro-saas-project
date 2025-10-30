@@ -1,7 +1,9 @@
 package io.mafenandaup.dev.service;
 
+import io.mafenandaup.dev.exceptions.InvalidArgsException;
 import io.mafenandaup.dev.model.Usuario;
 import io.mafenandaup.dev.repository.UsuarioRepository;
+import io.mafenandaup.dev.validator.UsuarioValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,19 +14,30 @@ import java.util.UUID;
 @Service
 public class UsuarioService {
 
-    @Autowired
     private UsuarioRepository repository;
+    private UsuarioValidator validator;
+
+    public UsuarioService(UsuarioRepository repository, UsuarioValidator validator) {
+        this.repository = repository;
+        this.validator = validator;
+    }
 
     public List<Usuario> getUsers(){
         return repository.findAll();
     }
 
     public Usuario saveUser(Usuario usuario){
+        validator.validarRegistro(usuario);
+        validator.validateRole(usuario.getRole());
         return repository.save(usuario);
     }
 
     public Optional<Usuario> obtainById(UUID id) {
-        return repository.findById(id);
+        var user = repository.findById(id);
+        if (user.isEmpty()) {
+            throw new InvalidArgsException("Usuário não encontrado para o ID informado.");
+        }
+        return user;
     }
 
     public void deleteUser(Usuario user) {
@@ -35,7 +48,8 @@ public class UsuarioService {
         if (user.getId() == null){
             throw new IllegalArgumentException("Usuário não encontrado/registrado. Tente novamente");
         }
-        // adicionar validações de campo com o validator aqui depois, além de verificação de registro nos outros métodos,etc
+        validator.validarRegistro(user);
+        validator.validateRole(user.getRole());
         repository.save(user);
     }
 

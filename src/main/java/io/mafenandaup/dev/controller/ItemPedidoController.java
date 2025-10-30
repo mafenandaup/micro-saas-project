@@ -78,7 +78,7 @@ public class ItemPedidoController {
 
     @DeleteMapping("/{itemid}")
     public ResponseEntity<ItemPedido> deleteItemPedido(@PathVariable String itemid) {
-        try {
+
             var idItemPedido = UUID.fromString(itemid);
             Optional<ItemPedido> itemPedidoOptional= service.obtainById(idItemPedido);
 
@@ -89,9 +89,6 @@ public class ItemPedidoController {
             service.deletarItemPedido(itemPedidoOptional.get());
             return ResponseEntity.noContent().build();
 
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 
 }

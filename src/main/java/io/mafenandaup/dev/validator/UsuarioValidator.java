@@ -1,5 +1,8 @@
 package io.mafenandaup.dev.validator;
 
+import io.mafenandaup.dev.exceptions.DuplicateRegistryException;
+import io.mafenandaup.dev.exceptions.InvalidRoleException;
+import io.mafenandaup.dev.model.Role;
 import io.mafenandaup.dev.model.Usuario;
 import io.mafenandaup.dev.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +19,18 @@ public class UsuarioValidator {
         this.repository = repository;
     }
 
-    public void validarRegistro(Usuario user) throws Exception {
+    public void validarRegistro(Usuario user) {
         if (userExists(user)){
-            throw new Exception("O Usuário registrado já existe. tente novamente.");
+            throw new DuplicateRegistryException("O usuário com este nome e e-mail já existe.");
+        }
+    }
+
+    public void validateRole(Role role) {
+        if (role == null ||
+                (!role.equals(Role.ADMIN) &&
+                        !role.equals(Role.CLIENTE) &&
+                        !role.equals(Role.REPRESENTANTE))) {
+            throw new InvalidRoleException("O valor referente ao cargo do usuário é inválido. Tente novamente.");
         }
     }
 
@@ -30,6 +42,6 @@ public class UsuarioValidator {
         if (user.getId() ==null){
             return userFound.isPresent();
         }
-        return !user.getId().equals(userFound.get()) && userFound.isPresent();
+        return  userFound.isPresent() && !userFound.get().getId().equals(user.getId());
     }
 }

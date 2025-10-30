@@ -1,5 +1,6 @@
 package io.mafenandaup.dev.validator;
 
+import io.mafenandaup.dev.exceptions.DuplicateRegistryException;
 import io.mafenandaup.dev.model.Produto;
 import io.mafenandaup.dev.model.Usuario;
 import io.mafenandaup.dev.repository.ProdutoRepository;
@@ -16,14 +17,14 @@ public class ProdutoValidator {
         this.repository = repository;
     }
 
-    public void validarRegistro(Produto produto) throws Exception {
+    public void validarRegistro(Produto produto)  {
         if (produtoExists(produto)){
-            throw new Exception("O Produto registrado já existe. tente novamente.");
+            throw new DuplicateRegistryException("O produto informado já existe. Tente novamente.");
         }
     }
 
     private boolean produtoExists(Produto produto){
-        Optional<Produto> produtoFound = repository.findByNomeAndValorUnitarioAndCategoria(
+        Optional<Produto> produtoFound = repository.findByNomeAndValorUnitarioAndCategoriaProduto(
                 produto.getNome(),
                 produto.getValorUnitario(),
                 produto.getCategoriaProduto()
@@ -31,7 +32,7 @@ public class ProdutoValidator {
         if (produto.getId() ==null){
             return produtoFound.isPresent();
         }
-        return !produto.getId().equals(produtoFound.get()) && produtoFound.isPresent();
+        return  produtoFound.isPresent() && !produtoFound.get().getId().equals(produto.getId());
     }
 }
 

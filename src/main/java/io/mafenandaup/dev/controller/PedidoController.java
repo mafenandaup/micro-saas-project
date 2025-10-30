@@ -2,6 +2,7 @@ package io.mafenandaup.dev.controller;
 
 import io.mafenandaup.dev.dto.PedidoDTO;
 import io.mafenandaup.dev.dto.ProdutoDTO;
+import io.mafenandaup.dev.exceptions.InvalidArgsException;
 import io.mafenandaup.dev.model.ItemPedido;
 import io.mafenandaup.dev.model.Pedido;
 import io.mafenandaup.dev.model.Produto;
@@ -65,22 +66,22 @@ public class PedidoController {
     public ResponseEntity<Pedido> savePedido(@RequestBody @Valid PedidoDTO pedido){
         try {
             Usuario cliente = usuarioService.obtainById(pedido.clienteId())
-                    .orElseThrow(() -> new IllegalArgumentException("Pedido não encontrado"));
+                    .orElseThrow(() -> new InvalidArgsException("Pedido não encontrado"));
             Usuario representante = usuarioService.obtainById(pedido.representanteId())
-                    .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado"));
+                    .orElseThrow(() -> new InvalidArgsException("Produto não encontrado"));
 
             Pedido pedidoMap = pedido.mapAttributesPedido(cliente, representante);
 
             service.savePedido(pedidoMap);
             return new ResponseEntity<>(pedidoMap, HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
+        } catch (InvalidArgsException e) {
             return ResponseEntity.badRequest().build();
         }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Pedido> deletePedido(@PathVariable String id) {
-        try {
+
             var idPedido = UUID.fromString(id);
             Optional<Pedido> pedidoOptional = service.obtainById(idPedido);
 
@@ -91,14 +92,11 @@ public class PedidoController {
             service.deletePedido(pedidoOptional.get());
             return ResponseEntity.noContent().build();
 
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<PedidoDTO> updateUser(@PathVariable String id, @RequestBody PedidoDTO dto) {
-        try {
+
             var idPedido = UUID.fromString(id);
             Optional<Pedido> pedidoOptional = service.obtainById(idPedido);
 
@@ -114,8 +112,6 @@ public class PedidoController {
             service.alterarPedido(pedido);
 
             return ResponseEntity.ok(dto);
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException(e.getMessage()); // colocar mensagem customizada de erro depois
-        }
+
     }
 }

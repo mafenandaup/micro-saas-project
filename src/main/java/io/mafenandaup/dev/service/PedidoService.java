@@ -5,6 +5,7 @@ import io.mafenandaup.dev.model.Produto;
 import io.mafenandaup.dev.model.Usuario;
 import io.mafenandaup.dev.repository.PedidoRepository;
 import io.mafenandaup.dev.repository.ProdutoRepository;
+import io.mafenandaup.dev.validator.PedidoValidator;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.UUID;
 public class PedidoService {
 
     private PedidoRepository repository;
+    private PedidoValidator validator;
 
     public PedidoService(PedidoRepository repository) {
         this.repository = repository;
@@ -27,6 +29,7 @@ public class PedidoService {
     }
 
     public Pedido savePedido (Pedido pedido){
+        validator.validarRegistro(pedido);
         return repository.save(pedido);
     }
 
@@ -42,7 +45,7 @@ public class PedidoService {
         if (pedido.getId() == null){
             throw new IllegalArgumentException("Usuário não encontrado/registrado. Tente novamente");
         }
-        // adicionar validações de campo com o validator aqui depois, além de verificação de registro nos outros métodos,etc
+        validator.validarRegistro(pedido);
         repository.save(pedido);
     }
 
