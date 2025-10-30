@@ -35,4 +35,5 @@ public class ItemPedido {
     @Column(name = "subtotal")
     private BigDecimal subtotal; //(QUANTIDADE * P.Unit)
 
+
 }

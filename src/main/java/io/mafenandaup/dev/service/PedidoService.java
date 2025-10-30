@@ -1,5 +1,6 @@
 package io.mafenandaup.dev.service;
 
+import io.mafenandaup.dev.exceptions.InvalidArgsException;
 import io.mafenandaup.dev.model.Pedido;
 import io.mafenandaup.dev.model.Produto;
 import io.mafenandaup.dev.model.Usuario;
@@ -34,7 +35,11 @@ public class PedidoService {
     }
 
     public Optional<Pedido> obtainById(UUID id) {
-        return repository.findById(id);
+        var pedido = repository.findById(id);
+        if (pedido.isEmpty()){
+            throw new InvalidArgsException("Pedido não encontrado/registrado. Tente novamente");
+        }
+        return pedido;
     }
 
     public void deletePedido(Pedido pedido) {
@@ -43,7 +48,7 @@ public class PedidoService {
 
     public void alterarPedido( Pedido pedido){
         if (pedido.getId() == null){
-            throw new IllegalArgumentException("Usuário não encontrado/registrado. Tente novamente");
+            throw new InvalidArgsException("Pedido não encontrado/registrado. Tente novamente");
         }
         validator.validarRegistro(pedido);
         repository.save(pedido);

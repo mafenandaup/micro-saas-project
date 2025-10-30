@@ -1,6 +1,7 @@
 package io.mafenandaup.dev.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.Setter;
 import java.util.UUID;
@@ -22,6 +23,7 @@ public class Usuario {
     @Column(name = "nome")
     private String nome;
 
+    @Email(message = "Formato de email inválido. tente novamente")
     @Column(name = "email")
     private String email;
 

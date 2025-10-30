@@ -34,6 +34,8 @@ public class UsuarioValidator {
         }
     }
 
+
+
     private boolean userExists(Usuario user){
         Optional<Usuario> userFound = repository.findByNomeAndEmail(
                user.getNome(),

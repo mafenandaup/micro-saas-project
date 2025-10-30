@@ -24,8 +24,8 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(InvalidArgsException.class)
     private ResponseEntity<RestErrorMessage> invalidArgsHandler(InvalidArgsException e){
-        RestErrorMessage errorMessage = new RestErrorMessage(HttpStatus.CONFLICT, e.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorMessage);    }
+        RestErrorMessage errorMessage = new RestErrorMessage(HttpStatus.BAD_REQUEST, e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);    }
 
     @ExceptionHandler(InvalidDeletionException.class)
     private ResponseEntity<RestErrorMessage> invalidDeletionHandler(InvalidDeletionException e){
@@ -37,6 +37,7 @@ public class RestExceptionHandler {
         String message = "Valor inválido para campo 'role'. VALORES PERMITIDOS:ADMIN, CLIENTE ou REPRESENTANTE.";
         return buildResponse(message, HttpStatus.BAD_REQUEST);
     }
+
 
 
     private ResponseEntity<Object> buildResponse(String message, HttpStatus status) {

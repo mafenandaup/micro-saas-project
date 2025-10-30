@@ -50,8 +50,13 @@ public class ProdutoController {
     @PostMapping
     public ResponseEntity<Produto> saveProduto(@RequestBody @Valid ProdutoDTO produto){
         var produtoEntity = produto.mapAttributesProduto();
+        try {
             service.saveProduct(produtoEntity);
             return new ResponseEntity<>(produtoEntity, HttpStatus.CREATED);
+        }catch (IllegalArgumentException e){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
     }
 
 

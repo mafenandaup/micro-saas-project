@@ -46,7 +46,7 @@ public class UsuarioService {
 
     public void alterarUsuario( Usuario user){
         if (user.getId() == null){
-            throw new IllegalArgumentException("Usuário não encontrado/registrado. Tente novamente");
+            throw new InvalidArgsException("Usuário não encontrado/registrado. Tente novamente");
         }
         validator.validarRegistro(user);
         validator.validateRole(user.getRole());
